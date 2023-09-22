@@ -1,6 +1,16 @@
 import Link from "next/link";
+import Accepted from "./Accepted";
+import Challenge from "./Challenge";
 
-export default async function QuizCard({ id, data, userId, allUsers }) {
+export default async function QuizCard({
+  quizId,
+  data,
+  userEmail,
+  userId,
+  allUsers,
+  ChallengedBy,
+  accepted,
+}) {
   const Category = [
     { value: "any", label: "Any Category" },
     { value: 9, label: "General Knowledge" },
@@ -46,39 +56,75 @@ export default async function QuizCard({ id, data, userId, allUsers }) {
   const dataType = Type.filter((d) => d.value == data.type);
 
   return (
-    <div
-      className={`w-full max-w-md border-2 rounded-lg relative overflow-hidden`}
-    >
-      <Link
-        href={data.finished ? `quizResults/${id}` : `takeQuiz/${id}`}
-        className="flex flex-col gap-2 p-6"
-      >
-        {data.finished && (
-          <div className="absolute top-0 right-0 px-2 py-1 text-sm bg-green-400">
-            Finished
+    <div className="w-full max-w-md p-6 overflow-hidden border-2 rounded-lg">
+      <div className="relative">
+        <Link
+          href={
+            !ChallengedBy
+              ? data.finished
+                ? `quizResults/${quizId}`
+                : `takeQuiz/${quizId}`
+              : "#"
+          }
+          className="flex flex-col gap-2"
+        >
+          {data.finished && !ChallengedBy && (
+            <div className="absolute px-2 py-1 text-sm text-white bg-green-400 -top-6 -right-6">
+              Finished
+            </div>
+          )}
+          <div className="">
+            <span className="px-1 bg-gray-200 rounded">Catagry type:</span>{" "}
+            {dataCategory[0].label}
+          </div>
+          <div className="">
+            <span className="px-1 bg-gray-200 rounded">Difficulty:</span>{" "}
+            {dataDifficulty[0].label}
+          </div>
+          <div className="">
+            <span className="px-1 bg-gray-200 rounded">Type:</span>{" "}
+            {dataType[0].label}
+          </div>
+          <div className="">
+            <span className="px-1 bg-gray-200 rounded">No of Qeustions:</span>{" "}
+            {data.amount}
+          </div>
+          <div className="">
+            <span className="px-1 bg-gray-200 rounded">
+              {" "}
+              {ChallengedBy ? `Challenger's ` : ""}Result:
+            </span>{" "}
+            {data.finished ? `${data.grade}/${data.amount}` : "not finished"}
+          </div>
+          {ChallengedBy && (
+            <div className="">
+              <span className="px-1 bg-gray-200 rounded">Challenged BY:</span>{" "}
+              {ChallengedBy}
+            </div>
+          )}
+        </Link>
+      </div>
+      <div className="flex justify-end">
+        {!ChallengedBy ? (
+          <div className="px-4">
+            <Challenge
+              quizId={quizId}
+              allUsers={allUsers}
+              details={data}
+              userEmail={userEmail}
+            />
+          </div>
+        ) : (
+          <div className="mt-2">
+            <Accepted
+              quizId={quizId}
+              userId={userId}
+              details={data}
+              accepted={accepted}
+            />
           </div>
         )}
-        <div className="">
-          <span className="px-1 bg-gray-200 rounded">Catagry type:</span>{" "}
-          {dataCategory[0].label}
-        </div>
-        <div className="">
-          <span className="px-1 bg-gray-200 rounded">Difficulty:</span>{" "}
-          {dataDifficulty[0].label}
-        </div>
-        <div className="">
-          <span className="px-1 bg-gray-200 rounded">Type:</span>{" "}
-          {dataType[0].label}
-        </div>
-        <div className="">
-          <span className="px-1 bg-gray-200 rounded">No of Qeustions:</span>{" "}
-          {data.amount}
-        </div>
-        <div className="">
-          <span className="px-1 bg-gray-200 rounded">Result:</span>{" "}
-          {data.finished ? `${data.grade}/${data.amount}` : "not finished"}
-        </div>
-      </Link>
+      </div>
     </div>
   );
 }

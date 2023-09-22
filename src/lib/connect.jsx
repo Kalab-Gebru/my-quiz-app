@@ -162,6 +162,46 @@ const services = {
       return undefined;
     }
   },
+  setChallenge: async (toUserId, byUser, quizId, quizDetail) => {
+    const usersref = doc(db, "Users", toUserId);
+    try {
+      await setDoc(
+        usersref,
+        {
+          challenge: arrayUnion(
+            ...[
+              {
+                quizId: quizId,
+                by: byUser,
+                details: quizDetail,
+                accepted: false,
+              },
+            ]
+          ),
+        },
+        { merge: true }
+      );
+    } catch (err) {
+      return "something went wrong";
+    }
+  },
+  acceptQuizs: async (userid, quizId, Details) => {
+    const usersref = doc(db, "Users", userid);
+    try {
+      await setDoc(
+        usersref,
+        {
+          quizs: arrayUnion(...[{ quizId: quizId, details: Details }]),
+          answers: arrayUnion(...[{ quizId: quizId, result: [] }]),
+        },
+        { merge: true }
+      );
+
+      return true;
+    } catch (err) {
+      return undefined;
+    }
+  },
 };
 
 export default services;

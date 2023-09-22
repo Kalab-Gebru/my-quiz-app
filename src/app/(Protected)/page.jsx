@@ -11,7 +11,7 @@ export default async function Home() {
     <div className="flex items-center justify-center w-full h-full">
       <div className="container mt-8">
         <div className="text-2xl">User : {session.user.name}</div>
-        <section className="mt-8">
+        <section className="flex flex-col gap-8 mt-8">
           {data?.quizs && (
             <div className="flex flex-col gap-8">
               {data.quizs.filter((q) => !q.details.finished).length != 0 && (
@@ -23,9 +23,9 @@ export default async function Home() {
                     if (!q.details.finished) {
                       return (
                         <QuizCard
-                          id={q.quizId}
+                          quizId={q.quizId}
                           data={q.details}
-                          userId={session.user.id}
+                          userEmail={session.user.email}
                           allUsers={allUsers}
                         />
                       );
@@ -40,9 +40,9 @@ export default async function Home() {
                     if (q.details.finished) {
                       return (
                         <QuizCard
-                          id={q.quizId}
+                          quizId={q.quizId}
                           data={q.details}
-                          userId={session.user.id}
+                          userEmail={session.user.email}
                           allUsers={allUsers}
                         />
                       );
@@ -50,6 +50,24 @@ export default async function Home() {
                   })}
                 </div>
               )}
+            </div>
+          )}
+          {data.challenge && (
+            <div className="flex flex-wrap gap-4">
+              <div className="w-full text-xl font-bold">Challenged Quizs</div>
+              {data.challenge?.map((q) => {
+                return (
+                  <QuizCard
+                    quizId={q.quizId}
+                    data={q.details}
+                    userEmail={session.user.email}
+                    userId={session.user.id}
+                    allUsers={allUsers}
+                    ChallengedBy={q.by}
+                    accepted={q.accepted}
+                  />
+                );
+              })}
             </div>
           )}
         </section>
