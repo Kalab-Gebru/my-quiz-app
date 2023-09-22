@@ -4,8 +4,10 @@ import { useState } from "react";
 
 export default function Accepted({ quizId, userId, details, accepted }) {
   const [acceptedS, setAcceptedS] = useState(false);
+  const [sending, setSending] = useState(false);
 
   async function Accept() {
+    setSending(true);
     const Qdetails = {
       amount: details.amount,
       category: details.category,
@@ -25,6 +27,7 @@ export default function Accepted({ quizId, userId, details, accepted }) {
 
     console.log(res.ok);
     if (res.ok) {
+      setSending(false);
       setAcceptedS(true);
     }
   }
@@ -36,7 +39,7 @@ export default function Accepted({ quizId, userId, details, accepted }) {
           ? "bg-gray-300 text-black"
           : "bg-green-300 text-white"
       }  rounded`}
-      disabled={acceptedS || accepted}
+      disabled={acceptedS || accepted || sending}
       onClick={Accept}
     >
       {accepted || acceptedS ? "Accepted" : "Accept"}

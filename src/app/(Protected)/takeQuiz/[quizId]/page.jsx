@@ -17,9 +17,9 @@ export default async function page({ params, searchParams }) {
 
   const path = `${params.quizId}`;
   let currentquiz;
-  const answers = user.answers.filter((q) => q.quizId == params.quizId);
+  const answers = user?.answers?.filter((q) => q.quizId == params.quizId);
 
-  const qNo = searchParams["qNo"] || answers[0].result.length + 1;
+  const qNo = searchParams["qNo"] || answers ? answers[0].result.length + 1 : 1;
 
   if (quiz) {
     function formatQuiz(q) {

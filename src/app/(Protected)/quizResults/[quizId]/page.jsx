@@ -7,7 +7,7 @@ export default async function page({ params }) {
   const session = await getServerSession(options);
   const user = await services.getUserById(session.user.id);
 
-  const exist = user.quizs.filter((q) => q.quizId == params.quizId);
+  const exist = user?.quizs?.filter((q) => q.quizId == params.quizId);
   const completed = exist[0].details.finished;
 
   if (!exist) {
