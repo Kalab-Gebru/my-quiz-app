@@ -47,7 +47,7 @@ export default async function QuizCard({ id, data, userId, allUsers }) {
 
   return (
     <div
-      className={`w-full max-w-md border-2 rounded-lg relative overflow-hidden`}
+      className={`w-full max-w-md border-2 rounded-xl relative overflow-hidden`}
     >
       <Link
         href={data.finished ? `quizResults/${id}` : `takeQuiz/${id}`}
