@@ -2,22 +2,11 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
-export default function CurrentQuiz({
-  path,
-  Quiz,
-  lastq,
-  userId,
-  answers,
-  amount,
-}) {
+export default function CurrentQuiz({ Quiz, quizId, userId, answers }) {
   const [currentAnswer, setCurrentAnswer] = useState();
-  const [loading, setLoading] = useState(false);
+  const [allAnswer, setAllAnswer] = useState(answers);
+  const [currentQuestion, setCurrentQuestion] = useState(answers.length);
   const router = useRouter();
-
-  useEffect(() => {
-    setCurrentAnswer(answers[Quiz.qno - 1] ? answers[Quiz.qno - 1] : undefined);
-    setLoading(false);
-  }, [Quiz]);
 
   let txt = document.createElement("textarea");
   function decode(str) {
@@ -26,11 +15,10 @@ export default function CurrentQuiz({
   }
 
   async function nextQ() {
-    setLoading(true);
     const data = {
       userId: userId,
-      quizId: path,
-      qNo: Number(Quiz.qno) - 1,
+      quizId: quizId,
+      qNo: currentQuestion,
       answer: currentAnswer,
       finished: false,
     };
@@ -40,20 +28,22 @@ export default function CurrentQuiz({
     });
 
     if (res.ok) {
-      router.push(`${path}?qNo=${Number(Quiz.qno) + 1}`);
+      const response = await res.json();
+      console.log(response.ans);
+      setAllAnswer(response.ans);
+      setCurrentQuestion((pre) => pre + 1);
     }
   }
 
-  function selectAnswer(index) {
-    setCurrentAnswer(index);
+  function selectAnswer(value) {
+    setCurrentAnswer(value);
   }
 
   async function submit() {
-    setLoading(true);
     const data = {
       userId: userId,
-      quizId: path,
-      qNo: Number(Quiz.qno) - 1,
+      quizId: quizId,
+      qNo: currentQuestion,
       answer: currentAnswer,
       finished: true,
     };
@@ -63,26 +53,23 @@ export default function CurrentQuiz({
     });
 
     if (res.ok) {
-      router.push(`/quizResults/${path}`);
+      router.push(`/quizResults/${quizId}`);
     }
   }
 
   function getQ(i) {
-    router.push(`${path}?qNo=${i + 1}`);
-  }
-  if (loading) {
-    return <div className="flex justify-center w-full mt-24">loading...</div>;
+    setCurrentQuestion(i);
   }
 
   return (
     <div className="flex flex-col w-full mt-8 md:max-w-3xl">
       <div className="flex flex-wrap gap-2 mb-8">
-        {Array.from({ length: amount }).map((b, i) => {
+        {Quiz.map((b, i) => {
           return (
             <button
               className={`px-2 py-1 border-2 rounded ${
-                answers[i] ? "bg-yellow-200" : ""
-              } ${Number(Quiz.qno) - 1 == i ? "border-green-400" : ""}`}
+                allAnswer[i] ? "bg-yellow-200" : ""
+              } ${currentQuestion == i ? "border-green-400" : ""}`}
               onClick={() => getQ(i)}
             >
               Q{i + 1}
@@ -91,12 +78,12 @@ export default function CurrentQuiz({
         })}
       </div>
       <div className="flex items-start text-2xl">
-        <span>{Quiz.qno}. </span>
-        <div className="">{decode(Quiz.question)}</div>
+        <span>{Quiz[currentQuestion].qno}. </span>
+        <div className="">{decode(Quiz[currentQuestion].question)}</div>
       </div>
 
       <div className="flex flex-col gap-2 px-4 my-8">
-        {Quiz.answers.map((q, i) => (
+        {Quiz[currentQuestion].answers.map((q) => (
           <button
             onClick={() => selectAnswer(q)}
             className={`h-12 p-2 border rounded-lg ${
@@ -108,7 +95,7 @@ export default function CurrentQuiz({
         ))}
       </div>
       <div className="flex justify-end w-full">
-        {lastq ? (
+        {Quiz.length == currentQuestion + 1 ? (
           <button
             className="px-6 py-2 text-white uppercase bg-blue-500 rounded"
             onClick={submit}

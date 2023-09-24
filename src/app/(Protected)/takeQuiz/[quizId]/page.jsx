@@ -19,41 +19,14 @@ export default async function page({ params, searchParams }) {
   let currentquiz;
   const answers = user?.answers?.filter((q) => q.quizId == params.quizId);
 
-  const qNo = searchParams["qNo"] || answers ? answers[0].result.length + 1 : 1;
-
-  if (quiz) {
-    function formatQuiz(q) {
-      const options = q.incorrect_answers;
-
-      options.splice(
-        ((options.length + 1) * Math.random()) | 0,
-        0,
-        q.correct_answer
-      );
-
-      currentquiz = {
-        qno: qNo,
-        type: q.type,
-        answers: options,
-        question: q.question,
-        difficulty: q.difficulty,
-        category: q.category,
-      };
-    }
-
-    formatQuiz(quiz.results[qNo - 1]);
-  }
-
   return (
     <div className="flex items-center justify-center w-full h-full">
       {quiz ? (
         <CurrentQuiz
-          Quiz={currentquiz}
-          path={path}
-          lastq={qNo == quiz.results.length}
+          Quiz={quiz.results}
+          quizId={path}
           userId={session.user.id}
           answers={answers[0].result}
-          amount={quiz.results.length}
         />
       ) : (
         <div className="">quiz not found</div>

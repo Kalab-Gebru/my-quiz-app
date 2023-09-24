@@ -52,7 +52,9 @@ export const POST = async (request) => {
 
     await services.setAnswer(userId, newAnswers, newQuizes);
 
-    return new Response(JSON.stringify({ res: "answer set" }), { status: 200 });
+    return new Response(JSON.stringify({ ans: newAnswers[0].result }), {
+      status: 200,
+    });
   } catch (error) {
     return new Response("Failed to create a new prompt", { status: 500 });
   }

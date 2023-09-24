@@ -29,7 +29,11 @@ export default async function page({ searchParams }) {
       type != "any" ? `&type=${type}` : ""
     }`;
 
-    newQuizid = await services.getQuizs(session.user.id, param, Details);
+    try {
+      newQuizid = await services.setQuizs(session.user.id, param, Details);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -56,7 +60,7 @@ export default async function page({ searchParams }) {
           )}
         </div>
       ) : (
-        <NewQuiz />
+        <NewQuiz userId={session.user.id} />
       )}
     </div>
   );

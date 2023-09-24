@@ -1,6 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Select from "react-select";
 
 const Category = [
@@ -44,7 +44,7 @@ const Type = [
   { value: "boolean", label: "True/False" },
 ];
 
-function Filter() {
+function NewQuiz({ userId }) {
   const [amount, setAmount] = useState(10);
   const [category, setCategory] = useState(Category[0]);
   const [difficulty, setDifficulty] = useState(Difficulty[0]);
@@ -52,22 +52,38 @@ function Filter() {
 
   const router = useRouter();
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
-    router.push(
-      `newQuiz?get=true&amount=${amount}&category=${category.value}&difficulty=${difficulty.value}&type=${type.value}`
-    );
-  }
+    const param = `amount=${amount}${
+      category.value != "any" ? `&category=${category.value}` : ""
+    }${difficulty.value != "any" ? `&difficulty=${difficulty.value}` : ""}${
+      type.value != "any" ? `&type=${type.value}` : ""
+    }`;
 
-  // const colorstyle = (width) => {
-  //   return {
-  //     control: (styles) => ({ ...styles, minWidth: width }),
-  //     option: (styles) => {
-  //       return { ...styles, zIndex: 1000 };
-  //     },
-  //   };
-  // };
+    const data = {
+      userId: userId,
+      param: param,
+      Details: {
+        amount: amount,
+        category: category.value,
+        difficulty: difficulty.value,
+        type: type.value,
+        finished: false,
+      },
+    };
+    const res = await fetch("/api/createQuiz", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+
+    // console.log(amount);
+    if (res.ok) {
+      const response = await res.json();
+      console.log(response);
+      router.push(`/takeQuiz/${response.id}`);
+    }
+  }
 
   return (
     <div className="px-4 py-8 border">
@@ -84,11 +100,11 @@ function Filter() {
                 className="w-full h-10 px-4 border-2 rounded"
                 type="number"
                 id="amount"
-                onChange={(e) => setAmount(e.value)}
+                onChange={(e) => setAmount(e.target.value)}
                 value={amount}
                 name="amount"
-                min="5"
-                max="20"
+                min={5}
+                max={20}
               />
             </div>
           </div>
@@ -141,4 +157,4 @@ function Filter() {
   );
 }
 
-export default Filter;
+export default NewQuiz;

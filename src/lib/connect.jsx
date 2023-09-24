@@ -5,6 +5,7 @@ import {
   getDocs,
   getDoc,
   arrayUnion,
+  deleteDoc,
   setDoc,
 } from "firebase/firestore";
 import { db } from "../firebase.config";
@@ -32,7 +33,7 @@ const services = {
       return "something went wrong";
     }
   },
-  getQuizs: async (userid, param, Details) => {
+  setQuizs: async (userid, param, Details) => {
     const quizref = collection(db, "Quiz");
     try {
       let quiz;
@@ -41,9 +42,37 @@ const services = {
           return response.json();
         })
         .then((data) => (quiz = data));
+      console.log(quiz);
 
       if (quiz.response_code == 0) {
-        const res = await addDoc(quizref, { ...quiz, details: Details });
+        function formatQuiz(q, i) {
+          const options = q.incorrect_answers;
+
+          options.splice(
+            ((options.length + 1) * Math.random()) | 0,
+            0,
+            q.correct_answer
+          );
+
+          return {
+            qno: i + 1,
+            type: q.type,
+            answers: options,
+            question: q.question,
+            difficulty: q.difficulty,
+            correct_answer: q.correct_answer,
+            category: q.category,
+          };
+        }
+
+        // formatQuiz(quiz.results[qNo - 1]);
+        const formatedQuiz = quiz.results.map((q, i) => formatQuiz(q, i));
+
+        const res = await addDoc(quizref, {
+          results: formatedQuiz,
+          details: Details,
+          noOfUsers: 1,
+        });
 
         const usersref = doc(db, "Users", userid);
         await setDoc(
@@ -73,9 +102,9 @@ const services = {
     }
   },
   getAnswersByID: async (userId, quizId) => {
-    const quizref = doc(db, "Users", userId);
+    const userref = doc(db, "Users", userId);
     try {
-      const user = await getDoc(quizref);
+      const user = await getDoc(userref);
 
       const currentAnswer = user
         .data()
@@ -164,6 +193,7 @@ const services = {
   },
   setChallenge: async (toUserId, byUser, quizId, quizDetail) => {
     const usersref = doc(db, "Users", toUserId);
+    const quizref = doc(db, "Quiz", quizId);
     try {
       await setDoc(
         usersref,
@@ -178,6 +208,14 @@ const services = {
               },
             ]
           ),
+        },
+        { merge: true }
+      );
+
+      await setDoc(
+        quizref,
+        {
+          noOfUsers: Number(deleteq) + 1,
         },
         { merge: true }
       );
@@ -200,6 +238,34 @@ const services = {
       return true;
     } catch (err) {
       return undefined;
+    }
+  },
+  deleteQuiz: async (userId, quizId, deleteq, newAnswers, newQuiz) => {
+    const usersref = doc(db, "Users", userId);
+    try {
+      await setDoc(
+        usersref,
+        {
+          answers: newAnswers,
+          quizs: newQuiz,
+        },
+        { merge: true }
+      );
+
+      const quizref = doc(db, "Quiz", quizId);
+      if (deleteq == 1) {
+        await deleteDoc(quizref);
+      } else {
+        await setDoc(
+          quizref,
+          {
+            noOfUsers: Number(deleteq) - 1,
+          },
+          { merge: true }
+        );
+      }
+    } catch (err) {
+      return "something went wrong";
     }
   },
 };

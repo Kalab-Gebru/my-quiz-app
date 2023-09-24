@@ -24,6 +24,7 @@ export default async function Home() {
                       return (
                         <QuizCard
                           quizId={q.quizId}
+                          userId={session.user.id}
                           data={q.details}
                           userEmail={session.user.email}
                           allUsers={allUsers}
@@ -41,6 +42,7 @@ export default async function Home() {
                       return (
                         <QuizCard
                           quizId={q.quizId}
+                          userId={session.user.id}
                           data={q.details}
                           userEmail={session.user.email}
                           allUsers={allUsers}

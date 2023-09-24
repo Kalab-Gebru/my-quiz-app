@@ -29,6 +29,7 @@ export default function Accepted({ quizId, userId, details, accepted }) {
     if (res.ok) {
       setSending(false);
       setAcceptedS(true);
+      window.location.reload(true);
     }
   }
 

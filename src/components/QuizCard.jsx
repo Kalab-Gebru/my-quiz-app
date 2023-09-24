@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Accepted from "./Accepted";
 import Challenge from "./Challenge";
+import DeleteButton from "./DeleteButton";
 
 export default async function QuizCard({
   quizId,
@@ -58,6 +59,16 @@ export default async function QuizCard({
   return (
     <div className="w-full max-w-md p-6 overflow-hidden border-2 rounded-lg">
       <div className="relative">
+        {data.finished && !ChallengedBy && (
+          <div className="absolute px-2 py-1 text-sm text-white bg-green-400 -top-6 -left-6">
+            Finished
+          </div>
+        )}
+        {!ChallengedBy && (
+          <div className="absolute -top-6 -right-6">
+            <DeleteButton userId={userId} quizId={quizId} />
+          </div>
+        )}
         <Link
           href={
             !ChallengedBy
@@ -68,12 +79,7 @@ export default async function QuizCard({
           }
           className="flex flex-col gap-2"
         >
-          {data.finished && !ChallengedBy && (
-            <div className="absolute px-2 py-1 text-sm text-white bg-green-400 -top-6 -right-6">
-              Finished
-            </div>
-          )}
-          <div className="">
+          <div className="mt-2">
             <span className="px-1 bg-gray-200 rounded">Catagry type:</span>{" "}
             {dataCategory[0].label}
           </div>

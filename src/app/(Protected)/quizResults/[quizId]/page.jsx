@@ -22,27 +22,6 @@ export default async function page({ params }) {
   const answers = await services.getAnswersByID(session.user.id, params.quizId);
   // const grade= await services.getgrades(session.user.id,params.quizId);
 
-  function formatQuiz(q, qNo) {
-    const options = q.incorrect_answers;
-
-    options.splice(
-      ((options.length + 1) * Math.random()) | 0,
-      0,
-      q.correct_answer
-    );
-
-    const currentquiz = {
-      qno: qNo + 1,
-      type: q.type,
-      answers: options,
-      question: q.question,
-      difficulty: q.difficulty,
-      category: q.category,
-    };
-
-    return currentquiz;
-  }
-
   return (
     <div className="flex flex-col items-center justify-center w-full h-full my-8">
       {quiz ? (
@@ -52,10 +31,9 @@ export default async function page({ params }) {
             <span className="underline">{`${grade}/${quiz.results.length}`}</span>
           </h1>
           {quiz.results.map((q, i) => {
-            const currentq = formatQuiz(q, i);
             return (
               <SingleQ
-                Currentq={currentq}
+                Currentq={q}
                 userA={answers[i]}
                 correctA={q.correct_answer}
               />
