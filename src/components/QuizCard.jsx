@@ -112,7 +112,7 @@ export default async function QuizCard({
       </div>
       <div className="flex justify-end">
         {!ChallengedBy ? (
-          <div className="px-4">
+          <div className="p-2 pb-0 rounded-md hover:bg-gray-200">
             <Challenge
               quizId={quizId}
               allUsers={allUsers}

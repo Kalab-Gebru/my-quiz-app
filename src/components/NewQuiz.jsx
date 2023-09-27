@@ -49,11 +49,13 @@ function NewQuiz({ userId }) {
   const [category, setCategory] = useState(Category[0]);
   const [difficulty, setDifficulty] = useState(Difficulty[0]);
   const [type, setType] = useState(Type[0]);
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setLoading(true);
 
     const param = `amount=${amount}${
       category.value != "any" ? `&category=${category.value}` : ""
@@ -79,10 +81,18 @@ function NewQuiz({ userId }) {
 
     // console.log(amount);
     if (res.ok) {
+      toast.success("Challenge sent");
+      setLoading(false);
       const response = await res.json();
       console.log(response);
       router.push(`/takeQuiz/${response.id}`);
+    } else {
+      setLoading(false);
+      toast.error("Something Went Wrong!!!");
     }
+  }
+  if (loading) {
+    return <div className="mt-24">Loading...</div>;
   }
 
   return (

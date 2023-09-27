@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export default function CurrentQuiz({ Quiz, quizId, userId, answers }) {
   const [currentAnswer, setCurrentAnswer] = useState();
