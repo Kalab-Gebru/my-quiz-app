@@ -211,11 +211,12 @@ const services = {
         },
         { merge: true }
       );
-
+      const quiz = await getDoc(quizref);
+      OldNoOfUsers = quiz.data().noOfUsers;
       await setDoc(
         quizref,
         {
-          noOfUsers: Number(deleteq) + 1,
+          noOfUsers: OldNoOfUsers + 1,
         },
         { merge: true }
       );

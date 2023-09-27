@@ -92,7 +92,13 @@ function NewQuiz({ userId }) {
     }
   }
   if (loading) {
-    return <div className="mt-24">Loading...</div>;
+    return (
+      <div className="flex justify-center w-full mt-24">
+        <span className="circle animate-loader"></span>
+        <span className="circle animate-loader animation-delay-200"></span>
+        <span className="circle animate-loader animation-delay-400"></span>
+      </div>
+    );
   }
 
   return (
