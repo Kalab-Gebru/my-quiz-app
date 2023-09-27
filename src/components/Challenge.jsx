@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 export default function Challenge({ quizId, userEmail, allUsers, details }) {
   const [open, setOpen] = useState(false);
   const [sending, setSending] = useState(false);
-  const linkText = `http://localhost:3000/?challenge=${quizId}&by=${userEmail}&difficulty=${
+  const linkText = `https://my-quiz-app-nine.vercel.app/?challenge=${quizId}&by=${userEmail}&difficulty=${
     details.difficulty
   }&type=${details.type}&amount=${details.amount}&category=${details.category}${
     details.grade ? `&grade=${details.grade}` : ""
