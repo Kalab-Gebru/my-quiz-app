@@ -212,7 +212,8 @@ const services = {
         { merge: true }
       );
       const quiz = await getDoc(quizref);
-      OldNoOfUsers = quiz.data().noOfUsers;
+
+      const OldNoOfUsers = quiz.data().noOfUsers;
       await setDoc(
         quizref,
         {

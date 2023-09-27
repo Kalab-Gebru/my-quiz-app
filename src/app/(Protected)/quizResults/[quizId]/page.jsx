@@ -28,7 +28,7 @@ export default async function page({ params }) {
         <div className="h-full w-fit">
           <h1 className="mb-8 text-3xl ">
             Results:{" "}
-            <span className="p-1 underline bg-gray-400 rounded">{`${grade}/${quiz.results.length}`}</span>
+            <span className="p-1 underline bg-gray-200 rounded">{`${grade}/${quiz.results.length}`}</span>
           </h1>
           {quiz.results.map((q, i) => {
             return (
